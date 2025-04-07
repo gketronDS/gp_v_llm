@@ -53,7 +53,13 @@ text-only prompts.
 local_script.sh
 ```
 2. ID'ing best LLM query
-
+```bash
+python3 bestquery.py
+```
+3. Comparing best i/o query, normal LLM query, and both.
+```bash
+python3 finalquery.py
+```
 
 ## Results and Interpret
 

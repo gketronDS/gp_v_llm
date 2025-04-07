@@ -25,7 +25,7 @@ class AzureAPIHandler:
         )
         self.name = dataset_name
 
-    def submit_question(self, question, csv_path, portion, iteration = 42, ):
+    def submit_question(self, question, csv_path, portion, iteration = 42, prompt='chen_equals'):
         self.iteration = iteration
         # Sanitize the input and log the action
         question_out = sanitize_input(question[0])
@@ -132,49 +132,49 @@ class AzureAPIHandler:
                     contextstring += ' |\n'
         contextstring += "```"
 
-        chen_returns = f'```python\ndef my_func({question[3]}): \n    \
-        """Alter this python function "my_func" to accept inputs containing \
-        {question[1]}. The function should output {question[2]} that replicates the underlying \
-        mechanism of the following examples. Do not import packages other than \
-        numpy or math. Examples: {returnstring}.\n\
-        """\n```' #Inline request
-
-        chen_equals = f'```python\ndef my_func({question[3]}): \n    \
-        """Alter this python function "my_func" to accept inputs containing \
-        {question[1]}. The function should output {question[2]} that replicates the underlying \
-        mechanism of the following examples. Do not import packages other than \
-        numpy or math. Examples: {noassertstring}.\n\
-        """\n```' #Inline request
-
-        chen_equals_text_only = f'```python\n{question_out}\ndef my_func({question[3]}): \n    \
-        """Alter this python function "my_func" to accept inputs containing \
-        {question[1]}. The function should output {question[2]}. Do not import packages other than \
-        numpy or math.\n \
-        """\n```'
-
-        sharlinbars = f'{contextstring} \n Write a python function "my_func" \
-        that best fits the data within the triple barticks. The \
-        data consists of inputs containing {question[1]}. The function should \
-        output {question[2]}. Do not import packages other than numpy or math.'
+        match prompt:
+            case 'chen_returns':
+                submission_prompt =  f'```python\ndef my_func({question[3]}): \n    \
+                """Alter this python function "my_func" to accept inputs containing \
+                {question[1]}. The function should output {question[2]} that replicates the underlying \
+                mechanism of the following examples. Do not import packages other than \
+                numpy or math. Examples: {returnstring}.\n\
+                """\n```' #Inline request
+            case 'chen_equals':
+                submission_prompt =  f'```python\ndef my_func({question[3]}): \n    \
+                """Alter this python function "my_func" to accept inputs containing \
+                {question[1]}. The function should output {question[2]} that replicates the underlying \
+                mechanism of the following examples. Do not import packages other than \
+                numpy or math. Examples: {noassertstring}.\n\
+                """\n```' #Inline request
+            case 'chen_equals_text_only':
+                submission_prompt =  f'```python\n{question_out}\ndef my_func({question[3]}): \n    \
+                """Alter this python function "my_func" to accept inputs containing \
+                {question[1]}. The function should output {question[2]}. Do not import packages other than \
+                numpy or math.\n \
+                """\n```'
+            case 'shalinbars':
+                submission_prompt =  f'{contextstring} \n Write a python function "my_func" \
+                that best fits the data within the triple barticks. The \
+                data consists of inputs containing {question[1]}. The function should \
+                output {question[2]}. Do not import packages other than numpy or math.'
+            case 'sharlincsv':
+                submission_prompt =  f'{textstring}\nWrite a python function "my_func" \
+                that best fits the data in CSV format within the triple barticks. The \
+                data consists of inputs containing {question[1]}. The function should \
+                output {question[2]}. Do not import packages other than numpy or math.'  #before w/o explian steps
+            case 'austin':
+                submission_prompt = f'Write a python function "my_func" \
+                that best fits the examples with inputs containing \
+                {question[1]}. The function should output {question[2]}. Do not import packages other \
+                than numpy or math. Your code should satisfy these tests: {assertstring}'  #before w/o explian steps
         
-        sharlincsv = f'{textstring}\nWrite a python function "my_func" \
-        that best fits the data in CSV format within the triple barticks. The \
-        data consists of inputs containing {question[1]}. The function should \
-        output {question[2]}. Do not import packages other than numpy or math.'  #before w/o explian steps
-
-        austin = f'Write a python function "my_func" \
-        that best fits the examples with inputs containing \
-        {question[1]}. The function should output {question[2]}. Do not import packages other \
-        than numpy or math. Your code should satisfy these tests: {assertstring}'  #before w/o explian steps
-
-        selectable_prompts = [austin, chen_equals, chen_returns, sharlincsv, sharlinbars]
-
         conversation = [
                 {"role": "system", "content":""},
-                {"role": "user", "content": chen_equals_text_only}
+                {"role": "user", "content": submission_prompt}
             ]
         
-        #print(wen2024)
+        #print(submission_prompt)
         
         response = self.client.chat.completions.create(
             model=self.model,
@@ -192,7 +192,7 @@ class AzureAPIHandler:
         #print(validation_flag)
         #print(function_response)
         if validation_flag:
-            self.save_response(question, context, function_response, portion)
+            self.save_response(question, context, function_response, portion, prompt)
             #logging.info("Response saved successfully.")
         else:
             logging.warning(
@@ -201,12 +201,12 @@ class AzureAPIHandler:
             )
         return function_response
 
-    def save_response(self, question, context, response_json, portion):
+    def save_response(self, question, context, response_json, portion, prompt):
 
         if not os.path.exists(f"datasets/{self.name}/{portion}/responses"):
             os.makedirs(f"datasets/{self.name}/{portion}/responses")
         try:
-            with open(f"datasets/{self.name}/{portion}/responses/{self.name}_{self.iteration}_"+"questiononly_responses.json", "a") as file:
+            with open(f"datasets/{self.name}/{portion}/responses/{self.name}_{self.iteration}_"+prompt+"_responses.json", "a") as file:
                 entry = {
                     "question": question,
                     "context": context,

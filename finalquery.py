@@ -9,6 +9,7 @@ from api_handler import AzureAPIHandler
 from llmutils import sanitize_input, verify_response
 from itertools import groupby
 from operator import itemgetter
+from LLM.main import loop_through_datasets
 
 PSB2_DATASETS = ['basement', 'bouncing-balls', 'bowling', 'camel-case',
                  'coin-sums', 'cut-vector', 'dice-game', 'find-pair', 
@@ -81,9 +82,12 @@ def main():
 
     print(test_names)
 
-    loop_through_datasets(dataset_names=test_names, query=full_query, portion='200', iterations=100)
+    loop_through_datasets(dataset_names=test_names, query=full_query, portion='200', iterations=100, promptlist=['chen_equals_text_only'])
+    loop_through_datasets(dataset_names=test_names, query=empty_query, portion='200', iterations=100, promptlist=['chen_equals'])
+    loop_through_datasets(dataset_names=test_names, query=full_query, portion='200', iterations=100, promptlist=['chen_equals'])
 
     print('Run Finished')
+
 
 def handle_subprocess_execution(function_response, inputdf, inputs, result, outputs, original_results,timeout=60):
     """Handle function execution in a subprocess with forced timeout."""
@@ -169,53 +173,58 @@ def load_and_execute_responses(function_response, csv_path):
 
     return handle_subprocess_execution(function_response, inputdf, inputs, result, outputs, original_results)
 
-def loop_through_datasets(dataset_names, query, iterations, portion, API=AzureAPIHandler):
+def loop_through_datasets(dataset_names, query, iterations, portion, promptlist, API=AzureAPIHandler):
     #print(dataset_names)
     #print(query)
     my_dict = dict(zip(dataset_names, query))
+    if query[0] != '':
+        subname='full'
+    else:
+        subname='empty'
     #print(my_dict)
     total_vals = []
-    
-    for name in dataset_names:
-        train_path = f"datasets/{name}/{name}_train.csv"
-        test_path = f"datasets/{name}/{name}_test.csv"
-        traincount = 0
-        testcount = 0
-        success_rates = []
-        for i in range(iterations):
-            api_key = os.environ.get('AZURE_OPENAI_API_KEY')
-            api = API(dataset_name=name, api_key=api_key)
-            function_response = api.submit_question(question=my_dict[name], csv_path=train_path, portion=portion, iteration=i+1)
-            #print("Question Response:")
-            #print(function_response)
-            train_success_rate = load_and_execute_responses(function_response, csv_path=train_path)
-            test_success_rate = load_and_execute_responses(function_response, csv_path=test_path)
-            if not (1.0-train_success_rate)>0:
-                traincount += 1
-            if not (1.0-test_success_rate)>0:
-                testcount += 1
-            print(train_success_rate)
-            print(traincount)
-            print(test_success_rate)
-            print(testcount)
-            percent_vals = [train_success_rate, test_success_rate]
-            success_rates.append(percent_vals)
-            print(str(i)+' Complete')
-        percent_dict = dict(zip([str(x) for x in range(iterations)], success_rates))
-        with open(f'datasets/{name}/{name}_{portion}_questiononly_per_dict.csv', 'w') as csv_file:  
+    for j in promptlist:
+        for name in dataset_names:
+            train_path = f"datasets/{name}/{name}_train.csv"
+            val_path = f"datasets/{name}/{name}_test.csv"
+            traincount = 0
+            testcount = 0
+            success_rates = []
+            for i in range(iterations):
+                api_key = os.environ.get('AZURE_OPENAI_API_KEY')
+                api = API(dataset_name=name, api_key=api_key)
+                function_response = api.submit_question(question=my_dict[name], csv_path=train_path, portion=portion, iteration=i+1, prompt=j)
+                #print("Question Response:")
+                #print(function_response)
+                train_success_rate = load_and_execute_responses(function_response, csv_path=train_path)
+                test_success_rate = load_and_execute_responses(function_response, csv_path=val_path)
+                if not (1.0-train_success_rate)>0:
+                    traincount += 1
+                if not (1.0-test_success_rate)>0:
+                    testcount += 1
+                print(train_success_rate)
+                print(traincount)
+                print(test_success_rate)
+                print(testcount)
+                percent_vals = [train_success_rate, test_success_rate]
+                success_rates.append(percent_vals)
+                print(str(i)+' Complete')
+            percent_dict = dict(zip([str(x) for x in range(iterations)], success_rates))
+            with open(f'datasets/{name}/{name}_{iterations}_{j}_{subname}scale_per_dict.csv', 'w') as csv_file:  
+                writer = csv.writer(csv_file)
+                for key, value in percent_dict.items():
+                    writer.writerow([key, value])
+            result_vals = [traincount, testcount]
+            print(result_vals)
+            total_vals.append(result_vals)
+            print(str(name)+' Complete')
+        results_dict = dict(zip(dataset_names, total_vals))
+        print(results_dict)
+        with open(f'datasets/{j}_{subname}scale_result.csv', 'w') as csv_file:  
             writer = csv.writer(csv_file)
-            for key, value in percent_dict.items():
+            for key, value in results_dict.items():
                 writer.writerow([key, value])
-        result_vals = [traincount, testcount]
-        print(result_vals)
-        total_vals.append(result_vals)
-        print(str(name)+' Complete')
-    results_dict = dict(zip(dataset_names, total_vals))
-    print(results_dict)
-    with open('datasets/questiononly.csv', 'w') as csv_file:  
-        writer = csv.writer(csv_file)
-        for key, value in results_dict.items():
-            writer.writerow([key, value])
+        print(str(j)+' Complete')
     print(api.__class__.__name__)
     print('Complete')
 
