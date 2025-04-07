@@ -17,7 +17,7 @@ class AzureAPIHandler:
         self.api_key = os.environ.get('AZURE_OPENAI_API_KEY')
         self.base_url = os.environ.get('AZURE_OPENAI_ENDPOINT')
         self.api_version = "2024-02-01"
-        self.model = "gketron-4o"
+        self.model = "gpt-4o"
         self.client = openai.AzureOpenAI(
             azure_endpoint=os.environ.get('AZURE_OPENAI_ENDPOINT'),
             api_key=os.environ.get('AZURE_OPENAI_API_KEY'),
@@ -132,46 +132,46 @@ class AzureAPIHandler:
                     contextstring += ' |\n'
         contextstring += "```"
 
-        chen2021_returns = f'```python\ndef my_func({question[3]}): \n    \
+        chen_returns = f'```python\ndef my_func({question[3]}): \n    \
         """Alter this python function "my_func" to accept inputs containing \
         {question[1]}. The function should output {question[2]} that replicates the underlying \
         mechanism of the following examples. Do not import packages other than \
         numpy or math. Examples: {returnstring}.\n\
         """\n```' #Inline request
 
-        chen2021_equals = f'```python\ndef my_func({question[3]}): \n    \
+        chen_equals = f'```python\ndef my_func({question[3]}): \n    \
         """Alter this python function "my_func" to accept inputs containing \
         {question[1]}. The function should output {question[2]} that replicates the underlying \
         mechanism of the following examples. Do not import packages other than \
         numpy or math. Examples: {noassertstring}.\n\
         """\n```' #Inline request
 
-        chen2021_question_only = f'```python\n{question_out}\ndef my_func({question[3]}): \n    \
+        chen_equals_text_only = f'```python\n{question_out}\ndef my_func({question[3]}): \n    \
         """Alter this python function "my_func" to accept inputs containing \
         {question[1]}. The function should output {question[2]}. Do not import packages other than \
         numpy or math.\n \
         """\n```'
 
-        wen2024 = f'{contextstring} \n Write a python function "my_func" \
+        sharlinbars = f'{contextstring} \n Write a python function "my_func" \
         that best fits the data within the triple barticks. The \
         data consists of inputs containing {question[1]}. The function should \
         output {question[2]}. Do not import packages other than numpy or math.'
         
-        sharlin2024 = f'{textstring}\nWrite a python function "my_func" \
+        sharlincsv = f'{textstring}\nWrite a python function "my_func" \
         that best fits the data in CSV format within the triple barticks. The \
         data consists of inputs containing {question[1]}. The function should \
         output {question[2]}. Do not import packages other than numpy or math.'  #before w/o explian steps
 
-        austin2021 = f'Write a python function "my_func" \
+        austin = f'Write a python function "my_func" \
         that best fits the examples with inputs containing \
         {question[1]}. The function should output {question[2]}. Do not import packages other \
         than numpy or math. Your code should satisfy these tests: {assertstring}'  #before w/o explian steps
 
-        selectable_prompts = [austin2021, chen2021_equals, chen2021_returns, sharlin2024, wen2024]
+        selectable_prompts = [austin, chen_equals, chen_returns, sharlincsv, sharlinbars]
 
         conversation = [
                 {"role": "system", "content":""},
-                {"role": "user", "content": chen2021_question_only}
+                {"role": "user", "content": chen_equals_text_only}
             ]
         
         #print(wen2024)

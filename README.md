@@ -10,25 +10,50 @@ with user intent consisting of input-output examples. We evaluated the
 program synthesis performance of PushGP and OpenAI’s GPT-4o
 on tasks from the PSB2 suite.
 
-## Installation
+## Installation and Running
 To install the required dependencies for running the experiments:
 
 1. Clone this repository.
-2. Install Python 3.10 or higher.
-3. Install required packages:
+2. Install Python 3.9 or higher.
+3. Start a virtual environement:
+```bash
+python3 -m venv myenv
+source myenv/bin/activate
+```
+4. Install required packages:
 ```bash
 pip install -r requirements.txt
 ```
+4. Add your Azure OpenAI apikey and endpoint as an evirononment variable. 
+In a Unix operating system: 
+```bash
+export AZURE_OPENAI_API_KEY=<your_api_key_here>
+export AZURE_OPENAI_ENDPOINT=<your_endpoint_here>
+```
+5. Confirm your API is working by running:
+```bash
+python3 replication.py
+```
+6. Generate data splits.
+```bash
+python3 datautils.py
+```
 
 ## Experiments
-A preliminary experiment identify a suitable
-prompt from a set of five gathered from existing literature on LLM-
+A preliminary experiment identified suitable
+prompts from a set of five gathered from existing literature on LLM-
 based program synthesis.
 
 After selecting the best prompt, we use the 25 PSB2 tasks to evaluate three program synthesizers: PushGP, GPT-4o with data-only prompts, and GPT-4o with
 text-only prompts. 
 
 ## How to Run Experiments
+1. Running GP
+```bash
+local_script.sh
+```
+2. ID'ing best LLM query
+
 
 ## Results and Interpret
 
@@ -49,10 +74,6 @@ for a given task.
 Contributions are welcome! Please send any suggestions or pull requests to 
 [GitHub Issue Tracker](https://github.com/theaksaini/gp_v_llm/issues) or via 
 [email](jose.hernandez8@cshs.org).
-
-# License
-The code in this repository is distributed under the MIT License. 
-See LICENSE.txt for details.
 
 # Citation
 
