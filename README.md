@@ -61,14 +61,15 @@ local_script.sh
 python3 finalquery.py
 ```
 
-## Results and Interpret
+## Results and Interpretation
 
 PushGP solved 10 tasks, GPT-4o with data-only
 prompts solved 8 tasks, and GPT-4o with text-only prompts solved
 7 tasks.
 Both PushGP and GPT-4o solve overlapping and distinct tasks, suggesting that
-neither consistently outperforms the other. Given 7 of the 25
-tasks were solved by GPT-4o irrespective of the type of prompt
+neither consistently outperforms the other. 
+
+Given 7 of the 25tasks were solved by GPT-4o irrespective of the type of prompt
 used, this indicates that GPT-4o is able to retrieve the relevant
 information in its training corpus related to the task using both
 text-based and data-based prompts. The preference for one
