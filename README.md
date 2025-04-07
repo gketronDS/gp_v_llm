@@ -48,15 +48,15 @@ After selecting the best prompt, we use the 25 PSB2 tasks to evaluate three prog
 text-only prompts. 
 
 ## How to Run Experiments
-1. Running GP
-```bash
-local_script.sh
-```
-2. ID'ing best LLM query
+1. ID'ing best LLM query
 ```bash
 python3 bestquery.py
 ```
-3. Comparing best i/o query, normal LLM query, and both.
+2. Running GP
+```bash
+local_script.sh
+```
+3. Comparing best i/o query, normal LLM query.
 ```bash
 python3 finalquery.py
 ```
