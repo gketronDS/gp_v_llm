@@ -80,7 +80,7 @@ for a given task.
 
 Contributions are welcome! Please send any suggestions or pull requests to 
 [GitHub Issue Tracker](https://github.com/theaksaini/gp_v_llm/issues) or via 
-[email](jose.hernandez8@cshs.org).
+[email](mailto:jose.hernandez8@cshs.org).
 
 # Citation
 
