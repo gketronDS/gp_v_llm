@@ -1,0 +1,1 @@
+Given two integers, return the largest integer that divides each of the integers evenly.

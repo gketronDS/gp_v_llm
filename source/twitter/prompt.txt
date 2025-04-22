@@ -1,0 +1,1 @@
+Given a string representing a tweet, validate whether the tweet meets Twitter's original character requirements. If the tweet has more than 140 characters, return the string "Too many characters". If the tweet is empty, return the string "You didn't type anything". Otherwise, return "Your tweet has X characters", where the - is the number of characters in the tweet.

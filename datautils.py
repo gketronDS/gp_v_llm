@@ -1,5 +1,6 @@
 import pandas as pd
 import csv
+import os
 
 PSB2_DATASETS = ['basement', 'bouncing-balls', 'bowling', 'camel-case', 
                  'coin-sums', 'cut-vector', 'dice-game', 'find-pair', 
@@ -139,6 +140,31 @@ def generate_training_test_data(data_dir, dataset_name, rand_seed, portion):
     return X_train, y_train, X_test, y_test
 
 
+def write_prompt_text(data_dir, dataset_name, text_to_write):
+    file_path = f"{data_dir}/{dataset_name}/prompt.txt"
+    if os.path.exists(file_path):
+        print(f"File '{file_path}' exists.")
+        with open(f"{data_dir}/{dataset_name}/prompt.txt", "w") as file:
+            file.write(text_to_write)
+            file.close()
+    else:
+        # Create the file if it doesn't exist
+        with open(file_path, 'w') as file:
+            file.write(text_to_write)
+            file.close()
+        print(f"File '{file_path}' created.")
+
+
+
+for i, names in enumerate(PSB2_DATASETS):
+    text_to_write = FULL_QUERY[i]
+    write_prompt_text('source', names, text_to_write)
+    print(names)
+    print("DONE")
+
+
+
+'''
 for names in PSB2_DATASETS:
     for i in [200]:
         X_train, y_train, X_test, y_test = generate_training_test_data(data_dir=\
@@ -146,4 +172,4 @@ for names in PSB2_DATASETS:
         print(X_train, y_train, X_test, y_test, i)
     print(names)
     print("DONE")
-
+'''

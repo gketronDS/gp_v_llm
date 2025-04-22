@@ -1,0 +1,1 @@
+Given a vector of integers, return the two elements that sum to a target integer.
