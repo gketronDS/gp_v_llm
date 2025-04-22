@@ -1,0 +1,1 @@
+a string in form of completed bowling card, with one character per roll

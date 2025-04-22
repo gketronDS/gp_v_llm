@@ -89,8 +89,31 @@ FULL_QUERY = ['Given a vector of integers, return the first index such that \
             n-dimensional vectors of floats, return the Euclidean distance \
             between the two vectors in n-dimensional space.']
 
-EMPTY_QUERY = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '',  '',  
-              '', '', '', '', '', '', '', '', '']
+EMPTY_QUERY = [['','a vector of integers of length [1, 20] with each integer in [−100, 100]','an integer', 'input1', 0],
+            ['', 'a float in [1.0, 100.0], float in [1.0, 100.0], integer in [1, 20]', 'a float', 'input1:float, input2:float, input3:int', 0], 
+            ['', 'a string in form of completed bowling card, with one character per roll','an integer', 'input1:str', 0], 
+            ['', 'a string of length [1, 20]', 'a string', 'input1:str', 0], 
+            ['', 'an integer in [1, 10000]','4 integers', 'input1:int', 0], 
+            ['', 'a vector of integers of length [1, 20] with each integer in [1, 10000]', '2 vectors of integers', 'input1', 0],
+            ['','2 integers in [1, 1000]','a float', 'input1:int, input2:int', 0],
+            ['','a vector of integers of length [2, 20] with each integer in [-10000, 10000], integer in [-20000, 20000]','2 integers', 'input1, input2:int', 0],
+            ['','an integer in [1, 1000000]','a string', 'input1:int', 0],
+            ['','a vector of integers of length [1, 20] with each integer in [6, 100000]','an integer', 'input1', 0],
+            ['','2 integers in [1, 1000000]','an integer', 'input1:int, input2:int', 0],
+            ['','2 strings of length [1, 20]','a vector of integers', 'input1:str, input2:str', 0],
+            ['','a vector of integers of length [0, 20] with each integer in [0, 1000]','a vector of integers', 'input1', 0],
+            ['','a vector of integers of length 16 with each integer in [1, 9]','an integer', 'input1', 0],
+            ['','2 strings of length 4 made of B, R, W, Y, O, G','2 integers', 'input1:str, input2:str', 0], 
+            ['','a string of length [1, 100]','a string', 'input1:str', 0],
+            ['','a string of digits of length [2, 20]','an integer', 'input1:str', 0], 
+            ['','a vector of floats of length [1, 20] with each float in [0.0, 50.0], a vector of floats of length [1, 20] with each float in [0.0, 100.0] where both vectors must be the same length',' a float', 'input1, input2', 0],
+            ['','an integer in [0, 20],a float in [0.0, 20.0],a float in [0.0, 10.0],a float in [0.0, 1.0]','a float', 'input1:int, input2:float, input3:float, input4:float', 0],
+            ['','a string of length [1, 20] made of characters from {t, f, |, &}','a Boolean', 'input1:str', 0],
+            ['','a string of length [0, 20]','a string', 'input1:str', 0],
+            ['','an integer in [0, 1000000]','a string', 'input1:int', 0],
+            ['','3 strings of length [0, 26]','a string', 'input1:str, input2:str, input3:str',0 ],
+            ['','string of length [0, 200]','a string', 'input1:str', 0],
+            ['','2 vectors of floats of length [1, 20] with each float in [-100.0, 100.0]','a float', 'input1, input2', 0]]
 
 
 
@@ -140,11 +163,11 @@ def generate_training_test_data(data_dir, dataset_name, rand_seed, portion):
     return X_train, y_train, X_test, y_test
 
 
-def write_prompt_text(data_dir, dataset_name, text_to_write):
-    file_path = f"{data_dir}/{dataset_name}/prompt.txt"
+def write_prompt_text(data_dir, dataset_name, text_to_write, file_name):
+    file_path = f"{data_dir}/{dataset_name}/{file_name}.txt"
     if os.path.exists(file_path):
         print(f"File '{file_path}' exists.")
-        with open(f"{data_dir}/{dataset_name}/prompt.txt", "w") as file:
+        with open(f"{data_dir}/{dataset_name}/{file_name}.txt", "w") as file:
             file.write(text_to_write)
             file.close()
     else:
@@ -155,14 +178,51 @@ def write_prompt_text(data_dir, dataset_name, text_to_write):
         print(f"File '{file_path}' created.")
 
 
-
+'''
 for i, names in enumerate(PSB2_DATASETS):
     text_to_write = FULL_QUERY[i]
-    write_prompt_text('source', names, text_to_write)
+    write_prompt_text('source', names, text_to_write, "prompt")
+    text_to_write = EMPTY_QUERY[i]
+    write_prompt_text('source', names, text_to_write[1], "input")
+    write_prompt_text('source', names, text_to_write[2], "output")
+    write_prompt_text('source', names, text_to_write[3], "function")
     print(names)
     print("DONE")
+'''
+'''
+for i, names in enumerate(PSB2_DATASETS):
+    for j in [200, 100, 50]:
+        for k in ["GP", "IO", "Prompt"]:
+            for l in ["logs", "data"]:
+                if not os.path.exists(f"{l}/{names}/{j}/{k}"):
+                    os.makedirs(f"{l}/{names}/{j}/{k}")
+    print(names)
+    print("DONE")
+'''
+'''
+for i, names in enumerate(PSB2_DATASETS):
+    for j in [200, 100, 50]:
+        if not os.path.exists(f"source/{names}/{j}"):
+            os.makedirs(f"source/{names}/{j}")
+    print(names)
+    print("DONE")
+'''
 
+def list_folders(directory):
+    """Lists all folders in a given directory.
 
+    Args:
+        directory: The path to the directory.
+
+    Returns:
+        A list of folder names in the directory.
+    """
+    return [item for item in os.listdir(directory) if os.path.isdir(os.path.join(directory, item))]
+
+# Example usage:
+directory_path = "./source/basement"  # Current directory
+folders = list_folders(directory_path)
+print(folders)
 
 '''
 for names in PSB2_DATASETS:

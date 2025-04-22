@@ -1,0 +1,1 @@
+a vector of integers of length [1, 20] with each integer in [6, 100000]

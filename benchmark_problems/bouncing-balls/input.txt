@@ -1,0 +1,1 @@
+a float in [1.0, 100.0], float in [1.0, 100.0], integer in [1, 20]

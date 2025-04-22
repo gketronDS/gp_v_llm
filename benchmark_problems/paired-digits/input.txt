@@ -1,0 +1,1 @@
+a string of digits of length [2, 20]
