@@ -12,7 +12,7 @@ from pyshgp.gp.genome import GeneSpawner
 
 
 
-import datautils
+import gp_v_llm.LLM.datautils as datautils
 import GP.gp_utils as gp_utils
 
 # We use 200 example cases for the training set (including all hand-chosen inputs) and 2000 for the unseen test set. We recommend a budget of 60 million program executions; 

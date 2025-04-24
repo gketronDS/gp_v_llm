@@ -14,3 +14,16 @@ def verify_response(response):
     except (IndexError, KeyError):
         pass
     return False, ''
+
+def list_folders(directory):
+    """Lists all folders in a given directory.
+
+    Args:
+        directory: The path to the directory.
+
+    Returns:
+        A list of folder names in the directory.
+    """
+    return [item for item in os.listdir(directory) if os.path.isdir(os.path.join(directory, item))]
+
+    

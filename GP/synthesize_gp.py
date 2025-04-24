@@ -7,7 +7,7 @@ from pyshgp.gp.estimators import PushEstimator
 from pyshgp.gp.genome import GeneSpawner
 from pyshgp.push.instruction_set import InstructionSet
 
-import datautils
+import gp_v_llm.LLM.datautils as datautils
 
 # Our recommendation is to use 200 example cases for the training set (including all hand-chosen
 # inputs) and 2000 for the unseen test set. We recommend a budget of 60 million program executions; 

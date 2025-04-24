@@ -1,0 +1,6 @@
+vector-distance-random.csv
+twitter-random.csv
+shopping-list-random.csv
+*_test.csv
+*_val.csv
+*_train.csv

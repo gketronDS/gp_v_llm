@@ -136,11 +136,11 @@ def generate_training_test_data(data_dir, dataset_name, rand_seed, portion):
     random_cases = pd.read_csv(f"{data_dir}/{dataset_name}/{dataset_name}-random.csv")
 
     # Ensure we have 200 training cases
-    train = pd.concat([edge_case, random_cases.sample(n=portion - len(edge_case), 
+    train = pd.concat([edge_case, random_cases.sample(n=int(portion) - len(edge_case), 
                                                       random_state=rand_seed)])
     train = train.sample(frac=1).reset_index(drop=True)
     input_cols = [col for col in train.columns if col.startswith("input")]
-    train.to_csv(f"{data_dir}/{dataset_name}/{dataset_name}_{str(portion)}_train.csv", 
+    train.to_csv(f"{data_dir}/{dataset_name}/{str(portion)}/{dataset_name}_{rand_seed}_train.csv", 
                  index=False)
     X_train = train[input_cols]
     y_train = train.drop(columns=input_cols)
@@ -150,12 +150,12 @@ def generate_training_test_data(data_dir, dataset_name, rand_seed, portion):
     val = val_test.iloc[:200]
     test = val_test.iloc[200:]
     input_cols = [col for col in val.columns if col.startswith("input")]
-    val.to_csv(f"{data_dir}/{dataset_name}/{dataset_name}_{str(portion)}_val.csv",
+    val.to_csv(f"{data_dir}/{dataset_name}/{str(portion)}/{dataset_name}__{rand_seed}_val.csv",
                  index=False)
     X_val = val[input_cols]
     y_val = val.drop(columns=input_cols)
 
-    test.to_csv(f"{data_dir}/{dataset_name}/{dataset_name}_{str(portion)}_test.csv",
+    test.to_csv(f"{data_dir}/{dataset_name}/{str(portion)}/{dataset_name}__{rand_seed}_test.csv",
                  index=False)
     X_test = test[input_cols]
     y_test = test.drop(columns=input_cols)
@@ -207,7 +207,7 @@ for i, names in enumerate(PSB2_DATASETS):
     print(names)
     print("DONE")
 '''
-
+'''
 def list_folders(directory):
     """Lists all folders in a given directory.
 
@@ -223,13 +223,13 @@ def list_folders(directory):
 directory_path = "./source/basement"  # Current directory
 folders = list_folders(directory_path)
 print(folders)
-
 '''
+"""
 for names in PSB2_DATASETS:
-    for i in [200]:
+    for i in [200, 50]:
         X_train, y_train, X_test, y_test = generate_training_test_data(data_dir=\
-            'datasets', dataset_name=names, rand_seed=42, portion=i)
+            'benchmark_problems', dataset_name=names, rand_seed=42, portion=i)
         print(X_train, y_train, X_test, y_test, i)
     print(names)
     print("DONE")
-'''
+"""

@@ -9,7 +9,7 @@ from api_handler import AzureAPIHandler
 from llmutils import sanitize_input, verify_response
 from itertools import groupby
 from operator import itemgetter
-from main import load_and_execute_responses
+from gp_v_llm.LLM.old.main import load_and_execute_responses
 
 PSB2_DATASETS = ['basement', 'bouncing-balls', 'bowling', 'camel-case',
                  'coin-sums', 'cut-vector', 'dice-game', 'find-pair', 
