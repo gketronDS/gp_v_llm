@@ -37,10 +37,15 @@ if not test:
     prompt_types = ["Prompt", "IO"]
     iterations = 100
 else: 
-    first_path = ['basement'] # Current directory
-    second_path = ['200']
+    first_path = ['basement', 'bouncing-balls', 'bowling', 'camel-case', 
+                 'coin-sums', 'cut-vector', 'dice-game', 'find-pair', 
+                 'fizz-buzz', 'fuel-cost', 'gcd',  'indices-of-substring',  
+                 'leaders', 'luhn', 'mastermind',  'middle-character',  
+                 'paired-digits', 'snow-day',  'solve-boolean',
+                   'spin-words', 'square-digits','substitution-cipher'] # Current directory
+    second_path = ['200', '50']
     prompt_types = ["Prompt", "IO"]
-    iterations = 5
+    iterations = 100
 
 
 def main(problem_names, train_length, prompt_types, iterations):

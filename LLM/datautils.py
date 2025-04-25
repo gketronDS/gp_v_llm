@@ -131,6 +131,8 @@ def generate_training_test_data(data_dir, dataset_name, rand_seed, portion):
     Returns:
     X_train, y_train, X_test, y_test: DataFrames: training and testing data
     '''
+    if not os.path.exists(f"{data_dir}/{dataset_name}/{str(portion)}"):
+        os.makedirs(f"{data_dir}/{dataset_name}/{str(portion)}")
 
     edge_case = pd.read_csv(f"{data_dir}/{dataset_name}/{dataset_name}-edge.csv")
     random_cases = pd.read_csv(f"{data_dir}/{dataset_name}/{dataset_name}-random.csv")
@@ -150,12 +152,12 @@ def generate_training_test_data(data_dir, dataset_name, rand_seed, portion):
     val = val_test.iloc[:200]
     test = val_test.iloc[200:]
     input_cols = [col for col in val.columns if col.startswith("input")]
-    val.to_csv(f"{data_dir}/{dataset_name}/{str(portion)}/{dataset_name}__{rand_seed}_val.csv",
+    val.to_csv(f"{data_dir}/{dataset_name}/{str(portion)}/{dataset_name}_{rand_seed}_val.csv",
                  index=False)
     X_val = val[input_cols]
     y_val = val.drop(columns=input_cols)
 
-    test.to_csv(f"{data_dir}/{dataset_name}/{str(portion)}/{dataset_name}__{rand_seed}_test.csv",
+    test.to_csv(f"{data_dir}/{dataset_name}/{str(portion)}/{dataset_name}_{rand_seed}_test.csv",
                  index=False)
     X_test = test[input_cols]
     y_test = test.drop(columns=input_cols)
@@ -202,8 +204,8 @@ for i, names in enumerate(PSB2_DATASETS):
 '''
 for i, names in enumerate(PSB2_DATASETS):
     for j in [200, 100, 50]:
-        if not os.path.exists(f"source/{names}/{j}"):
-            os.makedirs(f"source/{names}/{j}")
+        if not os.path.exists(f"benchmark_problems/{names}/{j}"):
+            os.makedirs(f"benchmark_problems/{names}/{j}")
     print(names)
     print("DONE")
 '''
